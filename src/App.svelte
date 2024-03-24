@@ -259,11 +259,13 @@
                   }
                 }
               }
-              // If snow didn't melt, it falls slowly
+              // If snow didn't melt, it falls more slowly
+              // Introduce a random chance for snow to not fall immediately
               if (
                 grid[i][j] === CellType.Snow &&
                 j < rows - 1 &&
-                grid[i][j + 1] === CellType.Empty
+                grid[i][j + 1] === CellType.Empty &&
+                Math.random() < 0.05 // 5% chance for snow to fall, making it fall slower
               ) {
                 grid[i][j] = CellType.Empty;
                 grid[i][j + 1] = CellType.Snow; // Snow falls down
