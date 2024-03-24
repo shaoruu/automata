@@ -15,6 +15,10 @@
     Snow, // Added Snow as per the instruction
   }
 
+  function isLiquid(cellType: CellType) {
+    return cellType === CellType.Water || cellType === CellType.Lava;
+  }
+
   const sketch = (p: p5) => {
     let cols: number;
     let rows: number;
@@ -112,8 +116,7 @@
               // Sand tries to fall straight down if possible
               if (
                 j < rows - 1 &&
-                (grid[i][j + 1] === CellType.Empty ||
-                  grid[i][j + 1] === CellType.Water)
+                (grid[i][j + 1] === CellType.Empty || isLiquid(grid[i][j + 1]))
               ) {
                 grid[i][j] = CellType.Empty;
                 grid[i][j + 1] = CellType.Sand;
