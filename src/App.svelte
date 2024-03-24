@@ -1,6 +1,7 @@
 <script lang="ts">
   import p5 from 'p5';
 
+  // add snow
   enum CellType {
     Empty,
     Stone,
@@ -11,6 +12,7 @@
     Lava,
     Leaves,
     Fire,
+    Snow, // Added Snow as per the instruction
   }
 
   const sketch = (p: p5) => {
@@ -88,6 +90,8 @@
         cellType = CellType.Leaves;
       } else if (p.key === 'v') {
         cellType = CellType.Lava;
+      } else if (p.key === 'n') {
+        cellType = CellType.Snow;
       }
 
       const col = Math.floor(p.mouseX / cellSize);
@@ -238,6 +242,33 @@
                 }
               }
               break;
+            case CellType.Snow:
+              for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                  if (dx === 0 && dy === 0) continue; // Skip the snow cell itself
+                  let nx = i + dx;
+                  let ny = j + dy;
+                  if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
+                    if (
+                      grid[nx][ny] === CellType.Fire ||
+                      grid[nx][ny] === CellType.Lava
+                    ) {
+                      grid[i][j] = CellType.Water; // Snow melts into water
+                      break;
+                    }
+                  }
+                }
+              }
+              // If snow didn't melt, it falls slowly
+              if (
+                grid[i][j] === CellType.Snow &&
+                j < rows - 1 &&
+                grid[i][j + 1] === CellType.Empty
+              ) {
+                grid[i][j] = CellType.Empty;
+                grid[i][j + 1] = CellType.Snow; // Snow falls down
+              }
+              break;
           }
         }
       }
@@ -286,6 +317,9 @@
               const waterColorIndex =
                 (i + j + Math.floor(p.frameCount / 10)) % waterColors.length;
               p.fill(waterColors[waterColorIndex]);
+              break;
+            case CellType.Snow:
+              p.fill(255, 255, 255); // White for snow
               break;
             case CellType.Grass:
               p.fill(96, 169, 23); // Enhanced color for Grass cells using RGB values
