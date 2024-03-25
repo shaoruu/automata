@@ -224,15 +224,16 @@
                   if (dx === 0 && dy === 0) continue; // Skip the lava cell itself
                   let nx = i + dx;
                   let ny = j + dy;
-                  if (
-                    nx >= 0 &&
-                    nx < cols &&
-                    ny >= 0 &&
-                    ny < rows &&
-                    grid[nx][ny] === CellType.Water
-                  ) {
-                    grid[i][j] = CellType.Stone;
-                    turnedToStone = true;
+                  if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
+                    if (grid[nx][ny] === CellType.Water) {
+                      grid[i][j] = CellType.Stone;
+                      turnedToStone = true;
+                    } else if (
+                      grid[nx][ny] === CellType.Wood ||
+                      grid[nx][ny] === CellType.Grass
+                    ) {
+                      grid[nx][ny] = CellType.Fire; // Burn down wood/grass around it
+                    }
                   }
                 }
               }
