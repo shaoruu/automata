@@ -1,7 +1,6 @@
 <script lang="ts">
   import p5 from 'p5';
 
-  // add snow
   enum CellType {
     Empty,
     Stone,
