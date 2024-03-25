@@ -11,7 +11,8 @@
     Lava,
     Leaves,
     Fire,
-    Snow, // Added Snow as per the instruction
+    Snow,
+    Glass,
   }
 
   function isLiquid(cellType: CellType) {
@@ -103,6 +104,8 @@
         cellType = CellType.Lava;
       } else if (p.key === 'n') {
         cellType = CellType.Snow;
+      } else if (p.key === '3') {
+        cellType = CellType.Glass;
       }
 
       const col = Math.floor(p.mouseX / cellSize);
@@ -155,6 +158,15 @@
                   grid[i][j] = CellType.Empty;
                   grid[i + 1][j + 1] = CellType.Sand;
                 }
+              }
+              // If sand is near lava, it turns into glass
+              if (
+                (i > 0 && grid[i - 1][j] === CellType.Lava) ||
+                (i < cols - 1 && grid[i + 1][j] === CellType.Lava) ||
+                (j > 0 && grid[i][j - 1] === CellType.Lava) ||
+                (j < rows - 1 && grid[i][j + 1] === CellType.Lava)
+              ) {
+                grid[i][j] = CellType.Glass;
               }
               break;
             case CellType.Water:
@@ -242,6 +254,12 @@
                 if (j < rows - 1 && grid[i][j + 1] === CellType.Empty) {
                   grid[i][j] = CellType.Empty;
                   grid[i][j + 1] = CellType.Lava;
+                } else if (i > 0 && grid[i - 1][j] === CellType.Empty) {
+                  grid[i][j] = CellType.Empty;
+                  grid[i - 1][j] = CellType.Lava;
+                } else if (i < cols - 1 && grid[i + 1][j] === CellType.Empty) {
+                  grid[i][j] = CellType.Empty;
+                  grid[i + 1][j] = CellType.Lava;
                 }
               }
               break;
@@ -271,6 +289,8 @@
                 grid[i][j + 1] = CellType.Snow; // Snow falls down
               }
               break;
+            case CellType.Glass:
+              break;
           }
         }
       }
@@ -296,6 +316,8 @@
 
       for (let i = 0; i < cols; i++) {
         for (let j = 0; j < rows; j++) {
+          p.push();
+          p.noStroke();
           switch (grid[i][j]) {
             case CellType.Stone:
               const stoneColor = addNoiseToColor(p.color('#707070'), 100, i, j);
@@ -366,11 +388,16 @@
                 dynamicLavaColors.length; // Change color more frequently and based on cell position
               p.fill(dynamicLavaColors[dynamicIndex]); // Apply the dynamically selected lava color
               break;
+            case CellType.Glass:
+              p.stroke(255, 255, 255, 100);
+              p.strokeWeight(1);
+              p.fill('#ffffff33');
+              break;
             default:
               p.noFill(); // No fill for empty cells
           }
-          p.noStroke();
           p.rect(i * cellSize, j * cellSize, cellSize, cellSize);
+          p.pop();
         }
       }
     };
