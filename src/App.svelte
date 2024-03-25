@@ -18,6 +18,14 @@
     return cellType === CellType.Water || cellType === CellType.Lava;
   }
 
+  function isFlammable(cellType: CellType) {
+    return cellType === CellType.Fire || cellType === CellType.Lava;
+  }
+
+  function canBurn(cellType: CellType) {
+    return cellType === CellType.Wood || cellType === CellType.Grass;
+  }
+
   const sketch = (p: p5) => {
     let cols: number;
     let rows: number;
@@ -195,12 +203,7 @@
                     let nx = i + dx;
                     let ny = j + dy;
                     if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
-                      if (
-                        (grid[nx][ny] === CellType.Wood ||
-                          grid[nx][ny] === CellType.Grass ||
-                          grid[nx][ny] === CellType.Leaves) &&
-                        Math.random() < 0.1
-                      ) {
+                      if (canBurn(grid[nx][ny]) && Math.random() < 0.1) {
                         // 10% chance to burn adjacent wood
                         grid[nx][ny] = CellType.Fire;
                       } else if (grid[nx][ny] === CellType.Water) {
@@ -227,10 +230,7 @@
                     if (grid[nx][ny] === CellType.Water) {
                       grid[i][j] = CellType.Stone;
                       turnedToStone = true;
-                    } else if (
-                      grid[nx][ny] === CellType.Wood ||
-                      grid[nx][ny] === CellType.Grass
-                    ) {
+                    } else if (canBurn(grid[nx][ny])) {
                       grid[nx][ny] = CellType.Fire; // Burn down wood/grass around it
                     }
                   }
@@ -252,10 +252,7 @@
                   let nx = i + dx;
                   let ny = j + dy;
                   if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
-                    if (
-                      grid[nx][ny] === CellType.Fire ||
-                      grid[nx][ny] === CellType.Lava
-                    ) {
+                    if (isFlammable(grid[nx][ny])) {
                       grid[i][j] = CellType.Water; // Snow melts into water
                       break;
                     }
