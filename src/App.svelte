@@ -36,8 +36,8 @@
     p.setup = () => {
       p.createCanvas(p.windowWidth, p.windowHeight);
 
-      cols = p.floor(p.windowWidth / cellSize);
-      rows = p.floor(p.windowHeight / cellSize);
+      cols = p.ceil(p.windowWidth / cellSize);
+      rows = p.ceil(p.windowHeight / cellSize);
 
       for (let colIndex = 0; colIndex < cols; colIndex++) {
         grid[colIndex] = [];
